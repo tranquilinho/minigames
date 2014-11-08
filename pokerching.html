@@ -105,13 +105,15 @@ function descartar(){
        console.log("Game over");
      }else{
        var clave_hexagrama= fila_y + fila_g + fila_b;
-       console.log(clave_hexagrama);
-       // console.log(hexagramas[clave_hexagrama];
+       // console.log(clave_hexagrama);
+       var num_hexagrama=hexagramas[clave_hexagrama];
+       console.log(num_hexagrama);
+       console.log(ingles[num_hexagrama]);
      }
    }
 }
 
- // permutacion del 1 al 12
+
 // http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex ;
