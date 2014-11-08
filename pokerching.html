@@ -5,9 +5,9 @@
 <body>
 
 <form>
-  <div id="carta1"><input type="checkbox">1 <input type="text" name="c1"></div>
-  <div id="carta2"><input type="checkbox">2 <input type="text" name="c2"></div>
-  <div id="carta3"><input type="checkbox">3 <input type="text" name="c3"></div>
+  <div id="carta1"><input type="checkbox" class="checkbox">1 <input type="text" name="c1"></div>
+  <div id="carta2"><input type="checkbox" class="checkbox">2 <input type="text" name="c2"></div>
+  <div id="carta3"><input type="checkbox" class="checkbox">3 <input type="text" name="c3"></div>
   <input type="button" value="Descartar(3)" onclick="descartar()">
   Sabiduria ganada / Wisdom won: <input type="text" name="result">
 </form>
@@ -67,6 +67,12 @@
  ingles[57]="Ground"; ingles[58]="Open"; ingles[59]="Dispersing"; ingles[58]="Articulating"; 
  ingles[61]="Center returning"; ingles[62]="Small Exceeding"; ingles[63]="Already Folding"; ingles[64]="Not Yet Folding"; 
  console.log(ingles);
+
+ for(i=0; i<3; i++){
+   document.forms[0].elements[2*i].checked=false;
+ }
+
+
 
 function descartar(){
    if(descartes>0){
