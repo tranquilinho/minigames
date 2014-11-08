@@ -9,7 +9,7 @@
   <div id="carta2"><input type="checkbox">2 <input type="text" name="c2"></div>
   <div id="carta3"><input type="checkbox">3 <input type="text" name="c3"></div>
   <input type="button" value="Descartar(3)" onclick="descartar()">
-
+  Sabiduria ganada / Wisdom won: <input type="text" name="result">
 </form>
 
 <script language="javascript">
@@ -102,13 +102,13 @@ function descartar(){
      console.log("B: " + fila_b);
 
      if(fila_y == "" || fila_g == "" || fila_b == ""){
-       console.log("Game over");
+       document.forms[0].elements[7].value="Game over - reload page to retry";
      }else{
        var clave_hexagrama= fila_y + fila_g + fila_b;
        // console.log(clave_hexagrama);
        var num_hexagrama=hexagramas[clave_hexagrama];
        console.log(num_hexagrama);
-       console.log(ingles[num_hexagrama]);
+       document.forms[0].elements[7].value=ingles[num_hexagrama];
      }
    }
 }
