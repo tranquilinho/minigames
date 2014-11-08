@@ -3,7 +3,12 @@
   <title>Pocker Ching</title>
 </head>
 <body>
-Hi
+
+<form>
+  <div id="carta1"><input type="checkbox">1 <input type="text" name="c1"></div>
+  <div id="carta2"><input type="checkbox">2 <input type="text" name="c2"></div>
+  <div id="carta3"><input type="checkbox">3 <input type="text" name="c3"></div>
+</form>
 
 <script language="javascript">
   // carta -> color fila1 fila2: "B01"
@@ -36,6 +41,19 @@ function shuffle(array) {
 }
  shuffle(baraja);
  console.log(baraja);
+ 
+//document.forms[0].elements[0].checked=true;
+ var carta_actual=0;
+ document.forms[0].elements[1].value=baraja[carta_actual];
+ carta_actual++;
+
+ document.forms[0].elements[3].value=baraja[carta_actual];
+ carta_actual++;
+
+ document.forms[0].elements[5].value=baraja[carta_actual];
+ carta_actual++;
+
+
 
 </script>
 
