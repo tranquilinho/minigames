@@ -8,6 +8,8 @@
   <div id="carta1"><input type="checkbox">1 <input type="text" name="c1"></div>
   <div id="carta2"><input type="checkbox">2 <input type="text" name="c2"></div>
   <div id="carta3"><input type="checkbox">3 <input type="text" name="c3"></div>
+  <input type="button" value="Descartar(3)" onclick="descartar()">
+
 </form>
 
 <script language="javascript">
@@ -17,7 +19,16 @@
              "G00","G01","G10","G11",
              "B00","B01","B10","B11"];
  //console.log(baraja);
- console.log(baraja[1]); // Y01
+ // console.log(baraja[1]); // Y01
+
+function descartar(){
+   for(i=0; i<3; i++){
+     console.log(i);
+     if(document.forms[0].elements[2*i].checked){
+       console.log("Descartar " + i);
+     }
+   }
+}
 
  // permutacion del 1 al 12
 // http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -42,7 +53,7 @@ function shuffle(array) {
  shuffle(baraja);
  console.log(baraja);
  
-//document.forms[0].elements[0].checked=true;
+//
  var carta_actual=0;
  document.forms[0].elements[1].value=baraja[carta_actual];
  carta_actual++;
