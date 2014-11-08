@@ -25,10 +25,28 @@
  // console.log(baraja[1]); // Y01
 
  var hexagramas={};
- hexagramas["000000"]="Fuerza";
- hexagramas["111111"]="Campo";
+ hexagramas["000000"]=1; hexagramas["000001"]="";  hexagramas["000010"]="";  hexagramas["000011"]="";
+ hexagramas["000100"]=""; hexagramas["000101"]=6;  hexagramas["000110"]="";  hexagramas["000111"]="";
+ hexagramas["001000"]="Fuerza"; hexagramas["001001"]="";  hexagramas["001010"]="";  hexagramas["001011"]="";
+ hexagramas["001100"]=""; hexagramas["001101"]="";  hexagramas["001110"]="";  hexagramas["001111"]="";
 
- console.log(hexagramas["111111"]);
+ hexagramas["010000"]="Fuerza"; hexagramas["010001"]="";  hexagramas["010010"]="";  hexagramas["010011"]="";
+ hexagramas["010100"]=""; hexagramas["010101"]="";  hexagramas["010110"]="";  hexagramas["010111"]="";
+ hexagramas["011000"]="Fuerza"; hexagramas["011001"]="";  hexagramas["011010"]="";  hexagramas["011011"]="";
+ hexagramas["011100"]=""; hexagramas["011101"]=4;  hexagramas["011110"]="";  hexagramas["011111"]="";
+
+ hexagramas["100000"]="Fuerza"; hexagramas["100001"]="";  hexagramas["100010"]="";  hexagramas["100011"]="";
+ hexagramas["100100"]=""; hexagramas["100101"]="";  hexagramas["100110"]="";  hexagramas["100111"]="";
+ hexagramas["101000"]=5; hexagramas["101001"]="";  hexagramas["101010"]="";  hexagramas["101011"]="";
+ hexagramas["101100"]=""; hexagramas["101101"]="";  hexagramas["101110"]=3;  hexagramas["101111"]=8;
+
+ hexagramas["110000"]="Fuerza"; hexagramas["110001"]="";  hexagramas["110010"]="";  hexagramas["110011"]="";
+ hexagramas["110100"]=""; hexagramas["110101"]="";  hexagramas["110110"]="";  hexagramas["110111"]="";
+ hexagramas["111000"]="Fuerza"; hexagramas["111001"]="";  hexagramas["111010"]="";  hexagramas["111011"]="";
+ hexagramas["111100"]=""; hexagramas["111101"]=7;  hexagramas["111110"]="";  hexagramas["111111"]=2;
+
+ // console.log(hexagramas["111111"]);
+ console.log(hexagramas);
 
 function descartar(){
    if(descartes>0){
