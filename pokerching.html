@@ -3,21 +3,43 @@
   <title>Pocker Ching</title>
 </head>
 <body>
+<style> 
 
+</style>
 <form>
   <table>
-    <tr bgcolor="yellow">
+    <tr class="row1">
       <td width="10%">&nbsp;</td><td width="35%">&nbsp;</td><td width="10%">&nbsp;</td><td width="35%">&nbsp;</td><td width="10%">&nbsp;</td></tr>  
-    <tr bgcolor="yellow">
+    <tr class="row1">
       <td>&nbsp;</td><td bgcolor="black">&nbsp;</td><td id="gap1">&nbsp;</td><td bgcolor="black">&nbsp;</td><td>&nbsp;</td></tr>
-    <tr bgcolor="yellow">
+    <tr class="row1">
       <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><input type="checkbox" class="checkbox">1<input type="hidden" name="c1"></td></tr>
-    <tr bgcolor="yellow">
+    <tr class="row1">
       <td>&nbsp;</td><td bgcolor="black">&nbsp;</td><td id="gap2">&nbsp;</td><td bgcolor="black">&nbsp;</td><td>&nbsp;</td></tr>
-    <tr bgcolor="yellow">
+    <tr class="row1">
       <td colspan="5">&nbsp;</td></tr>
-  <tr bgcolor="green"><td><input type="checkbox" class="checkbox">2 <input type="hidden" name="c2"></td></tr>
-  <tr bgcolor="cyan"><td><input type="checkbox" class="checkbox">3 <input type="hidden" name="c3"></td></tr>
+
+    <tr class="row2">
+      <td width="10%">&nbsp;</td><td width="35%">&nbsp;</td><td width="10%">&nbsp;</td><td width="35%">&nbsp;</td><td width="10%">&nbsp;</td></tr>  
+    <tr class="row2">
+      <td>&nbsp;</td><td bgcolor="black">&nbsp;</td><td id="gap3">&nbsp;</td><td bgcolor="black">&nbsp;</td><td>&nbsp;</td></tr>
+    <tr class="row2">
+      <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><input type="checkbox" class="checkbox">2 <input type="hidden" name="c2"></td></tr>
+    <tr class="row2">
+      <td>&nbsp;</td><td bgcolor="black">&nbsp;</td><td id="gap4">&nbsp;</td><td bgcolor="black">&nbsp;</td><td>&nbsp;</td></tr>
+    <tr class="row2">
+      <td colspan="5">&nbsp;</td></tr>
+
+    <tr class="row3">
+      <td width="10%">&nbsp;</td><td width="35%">&nbsp;</td><td width="10%">&nbsp;</td><td width="35%">&nbsp;</td><td width="10%">&nbsp;</td></tr>  
+    <tr class="row3">
+      <td>&nbsp;</td><td bgcolor="black">&nbsp;</td><td id="gap5">&nbsp;</td><td bgcolor="black">&nbsp;</td><td>&nbsp;</td></tr>
+    <tr class="row3">
+      <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><input type="checkbox" class="checkbox">3 <input type="hidden" name="c3"></td></tr>
+    <tr class="row3">
+      <td>&nbsp;</td><td bgcolor="black">&nbsp;</td><td id="gap6">&nbsp;</td><td bgcolor="black">&nbsp;</td><td>&nbsp;</td></tr>
+    <tr class="row3">
+      <td colspan="5">&nbsp;</td></tr>
   </table>
   <input type="button" value="Descartar(3)" onclick="descartar()">
   Sabiduria ganada / Wisdom won: <input type="text" name="result">
@@ -34,7 +56,7 @@
  var colores={};
  colores["Y"] = "yellow"; colores["G"] = "green"; colores["B"] = "cyan";
  var gaps=[];
- for(i=1; i <= 2 ; i++){
+ for(i=1; i <= 6 ; i++){
    gaps[i-1] = document.getElementById("gap" + i);
  }
  //console.log(baraja);
@@ -88,22 +110,32 @@
    document.forms[0].elements[2*i].checked=false;
  }
 
+function fill_gap(gap_number, value, color_key){
+   console.log(gap_number + " " + value + " " + color_key);
+   var color = colores[color_key];
+   if(value == "0"){
+     gaps[gap_number].style.backgroundColor="black";
+   }else{
+     gaps[gap_number].style.backgroundColor=color;
+   }
+}
+
+
 
 function descartar(){
    if(descartes>0){
      for(i=0; i<3; i++){
-       if(document.forms[0].elements[2*i].checked){
+           if(document.forms[0].elements[2*i].checked){
          // console.log("Descartar " + i);
          var carta = baraja[carta_actual];
          var color = colores[carta[0]];
-
-         document.forms[0].elements[2*i + 1].value = carta;
-         if(carta[1] == "0"){
-           gaps[2*i +1].style.backgroundColor="black";
-         }else{
-           gaps[2*i +1].style.backgroundColor=color;
-         }
          
+         document.forms[0].elements[2*i + 1].value = carta;
+         for (row in document.getElementsByClassName("row"+(i+1))){
+           row.style.backgroundColor=color;           
+         }
+         fill_gap(2*i, carta[1], carta[0]);
+         fill_gap(2*i + 1, carta[2], carta[0]);
          carta_actual++;
        }
      }
@@ -169,27 +201,30 @@ function shuffle(array) {
  console.log(baraja);
 
 
-function fill_gap(gap_number, value, color_key){
-   var color = colores[color_key];
-   if(value == "0"){
-     gaps[gap_number].style.backgroundColor="black";
-   }else{
-     gaps[gap_number].style.backgroundColor=color;
+ function draw_card(row, card){
+   var color = colores[card[0]];
+   var rows=document.getElementsByClassName("row" + (row + 1));
+   for (r=0; r< rows.length; r++){
+     rows[r].style.backgroundColor=color;           
    }
-}
+   fill_gap(2*row, card[1], card[0]);
+   fill_gap(2*row + 1, card[2], card[0]);
+ }
 
 
  var carta = baraja[carta_actual];
- document.forms[0].elements[1].value=baraja[carta_actual];
- fill_gap(0, carta[1], carta[0]);
- fill_gap(1, carta[2], carta[0]);
-
+ document.forms[0].elements[1].value=carta;
+ draw_card(0,carta);
  carta_actual++;
 
- document.forms[0].elements[3].value=baraja[carta_actual];
+ carta = baraja[carta_actual];
+ document.forms[0].elements[3].value=carta;
+ draw_card(1,carta);
  carta_actual++;
 
- document.forms[0].elements[5].value=baraja[carta_actual];
+ carta = baraja[carta_actual];
+ document.forms[0].elements[5].value=carta;
+ draw_card(2,carta);
  carta_actual++;
 
 </script>
