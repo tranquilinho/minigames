@@ -4,10 +4,16 @@
 </head>
 <body>
 <style> 
+table {
+    border-collapse: collapse;
+}
+td {
+    padding: 0;
+}
 
 </style>
 <form>
-  <table>
+  <table border="0">
     <tr class="row1">
       <td width="10%">&nbsp;</td><td width="35%">&nbsp;</td><td width="10%">&nbsp;</td><td width="35%">&nbsp;</td><td width="10%">&nbsp;</td></tr>  
     <tr class="row1">
@@ -104,14 +110,17 @@
  ingles[53]="Infiltrating"; ingles[54]="Converting the maiden"; ingles[55]="Abounding"; ingles[56]="Sojourning"; 
  ingles[57]="Ground"; ingles[58]="Open"; ingles[59]="Dispersing"; ingles[58]="Articulating"; 
  ingles[61]="Center returning"; ingles[62]="Small Exceeding"; ingles[63]="Already Folding"; ingles[64]="Not Yet Folding"; 
- console.log(ingles);
+ // console.log(ingles);
 
  for(i=0; i<3; i++){
    document.forms[0].elements[2*i].checked=false;
  }
 
+ document.forms[0].elements[7].value="";
+
+
 function fill_gap(gap_number, value, color_key){
-   console.log(gap_number + " " + value + " " + color_key);
+   // console.log(gap_number + " " + value + " " + color_key);
    var color = colores[color_key];
    if(value == "0"){
      gaps[gap_number].style.backgroundColor="black";
@@ -120,6 +129,15 @@ function fill_gap(gap_number, value, color_key){
    }
 }
 
+ function draw_card(row, card){
+   var color = colores[card[0]];
+   var rows=document.getElementsByClassName("row" + (row + 1));
+   for (r=0; r< rows.length; r++){
+     rows[r].style.backgroundColor=color;           
+   }
+   fill_gap(2*row, card[1], card[0]);
+   fill_gap(2*row + 1, card[2], card[0]);
+ }
 
 
 function descartar(){
@@ -128,14 +146,8 @@ function descartar(){
            if(document.forms[0].elements[2*i].checked){
          // console.log("Descartar " + i);
          var carta = baraja[carta_actual];
-         var color = colores[carta[0]];
-         
          document.forms[0].elements[2*i + 1].value = carta;
-         for (row in document.getElementsByClassName("row"+(i+1))){
-           row.style.backgroundColor=color;           
-         }
-         fill_gap(2*i, carta[1], carta[0]);
-         fill_gap(2*i + 1, carta[2], carta[0]);
+         draw_card(i,carta);
          carta_actual++;
        }
      }
@@ -199,18 +211,6 @@ function shuffle(array) {
 
  shuffle(baraja);
  console.log(baraja);
-
-
- function draw_card(row, card){
-   var color = colores[card[0]];
-   var rows=document.getElementsByClassName("row" + (row + 1));
-   for (r=0; r< rows.length; r++){
-     rows[r].style.backgroundColor=color;           
-   }
-   fill_gap(2*row, card[1], card[0]);
-   fill_gap(2*row + 1, card[2], card[0]);
- }
-
 
  var carta = baraja[carta_actual];
  document.forms[0].elements[1].value=carta;
