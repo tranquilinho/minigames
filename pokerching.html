@@ -163,8 +163,10 @@
      ingles[61]="Center returning"; ingles[62]="Small Exceeding"; ingles[63]="Already Folding"; ingles[64]="Not Yet Folding"; 
      // console.log(ingles);
 
+     // start with one of the 3 checkboxes checked
+     var random_checked=Math.floor(Math.random() * 3);
      for(i=0; i<3; i++){
-       document.forms[0].elements[2*i].checked=false;
+       document.forms[0].elements[2*i].checked = (i==random_checked);
      }
 
      document.forms[0].elements[7].value="";
