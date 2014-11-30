@@ -62,13 +62,19 @@
        ]
      ];
 
+     var current_scene=0;
+     var current_line=0;
      
      document.getElementById("my_speech").innerHTML = scene[0][0].english;
-     // document.getElementById("other_speech").innerHTML = messages["joe_scn001_l01"];
-       
+     current_line++;
+
      
      function next(){
-       document.getElementById("other_speech").innerHTML = scene[0][1].english;
+       var next_line=scene[current_scene][current_line];
+       var target="my_speech";
+       if(next_line.who != "me") target="other_speech";
+       document.getElementById(target).innerHTML = next_line.english;
+       current_line++;
      }
      
     </script>
