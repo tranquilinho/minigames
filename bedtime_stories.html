@@ -51,22 +51,24 @@
      // !!!! refactor into its own file, bs_text.js?
      // start with a "simple DB"
      // limit text to 160 characters :-p     
-     messages={};
-     messages["me_scn001_l01"]=  "Have you heard about that strange place?";
-     messages["joe_scn001_l01"]= "What place?";
-     messages["me_scn001_l02"]=  "That creepy old orphanage...";
-     messages["joe_scn001_l02"]= "Mmmm... just rumours, you know"
-     messages["me_scn001_l03"]=  "What kinda rumours?";
-     messages["joe_scn001_l03"]= "Like, people dissapearing...";
-
+     var scene=[
+       // scn000
+       [{who: "me",  english: "Have you heard about that strange place?"},
+        {who: "joe", english: "What place?"},
+        {who: "me", english:  "That creepy old orphanage..."},
+        {who: "joe", english: "Mmmm... just rumours, you know"},
+        {who: "me",  english: "What kinda rumours?"},
+        {who: "joe", english:  "Like, people dissapearing..."}
+       ]
+     ];
 
      
-     document.getElementById("my_speech").innerHTML = messages["me_scn001_l01"];
+     document.getElementById("my_speech").innerHTML = scene[0][0].english;
      // document.getElementById("other_speech").innerHTML = messages["joe_scn001_l01"];
        
      
      function next(){
-       document.getElementById("my_speech").innerHTML = "New";
+       document.getElementById("other_speech").innerHTML = scene[0][1].english;
      }
      
     </script>
