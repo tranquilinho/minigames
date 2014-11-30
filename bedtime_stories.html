@@ -59,6 +59,7 @@
      var scenes={};
      scenes["start"]=
      { english: "You are in a room with 3 guys. They all look dangerous",
+       dialogs: { Joe: 0, pete:1},
        dialog_lines:
        [
          // d00
@@ -79,9 +80,8 @@
           ]
        ],        
        actions:
-                     [{english: "Talk to 1st guy", code: "talk(0)"},
-                      {english: "Talk to 2nd guy", code: "talk(1)"},
-                      {english: "Fight the 3rd guy", code: next},
+                     [{english: "Talk", code: "talk(['Joe','pete','alex'])"},
+                      {english: "Fight", code: "fight('joe','pete','alex')"},
                       ]
      };
 
@@ -93,28 +93,54 @@
      
      document.getElementById("scene_text").innerHTML = current_scene.english;
 
-     document.forms[0].elements[0].value="1 - " + current_scene.actions[0].english;
-     document.forms[0].elements[0].setAttribute("onclick",current_scene.actions[0].code);
+     function assign_actions(){
+       document.forms[0].elements[0].value="1 - " + current_scene.actions[0].english;
+       document.forms[0].elements[0].setAttribute("onclick",current_scene.actions[0].code);
+       
+       document.forms[0].elements[1].value="2 - " + current_scene.actions[1].english;
+       document.forms[0].elements[1].setAttribute("onclick",current_scene.actions[1].code);
 
-     document.forms[0].elements[1].value="2 - " + current_scene.actions[1].english;
-     document.forms[0].elements[1].setAttribute("onclick",current_scene.actions[1].code);
+       document.forms[0].elements[2].value="3 - " + current_scene.actions[2].english;
+       document.forms[0].elements[2].setAttribute("onclick",current_scene.actions[2].code);
+     }
 
-     document.forms[0].elements[2].value="3 - " + current_scene.actions[2].english;
-     document.forms[0].elements[2].setAttribute("onclick",current_scene.actions[2].code);
+     assign_actions();
 
+     function talk(whom){
+       current_line=0;
+       
+       document.forms[0].elements[0].value="1 - Back";
+       document.forms[0].elements[0].setAttribute("onclick","clean_dialogs(); assign_actions()");
+       
+       document.forms[0].elements[1].value="2 - Talk to " + whom[0];
+       document.forms[0].elements[1].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[0]] + ")" );
+
+       document.forms[0].elements[2].value="3 - Talk to " + whom[1];
+       document.forms[0].elements[2].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[1]] + ")" );
+
+       document.forms[0].elements[3].value="4 - Talk to " + whom[2];
+       document.forms[0].elements[3].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[2]] + ")" );
+       
+     }
+
+     function clean_dialogs(){
+       document.getElementById("other_name").innerHTML = "&nbsp;";
+       document.getElementById("other_speech").innerHTML = "&nbsp;";
+       document.getElementById("my_speech").innerHTML = "&nbsp;";
+     }
      
-     function talk(dialog_number){
+     function dialog_start(dialog_number){
        if(dialog_number != current_dialog){
          current_line=0;
          document.getElementById("other_name").innerHTML = "&nbsp;";
          document.getElementById("other_speech").innerHTML = "&nbsp;";
        }
        current_dialog=dialog_number;
-       next();
+       dialog_next();
      }
      
      
-     function next(){
+     function dialog_next(){
        var next_line=current_scene.dialog_lines[current_dialog][current_line];
        var speaker="me"
        var target="my_speech";
