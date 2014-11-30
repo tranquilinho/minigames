@@ -32,12 +32,12 @@
       <div style="width: 358px; margin-left: 400px; height: 500px; border:1px solid grey; text-align: left;  padding: 20px;">
         <div style="height: 50%; border-bottom:1px solid grey;">
           <p class="person_name">Me</p>
-          <p id="my_speech">Hi!</p>
+          <p id="my_speech">&nbsp;</p>
           <input type="button" value="Next" onclick="next()">
         </div>
         <div style="height: 50%; ">
           <p class="person_name">Joe</p>
-          <p id="other_speech">hO!</p>
+          <p id="other_speech">&nbsp;</p>
         </div>
       </div>
     </form>
@@ -48,6 +48,23 @@
     
     <script language="javascript">
 
+     // !!!! refactor into its own file, bs_text.js?
+     // start with a "simple DB"
+     // limit text to 160 characters :-p     
+     messages={};
+     messages["me_scn001_l01"]=  "Have you heard about that strange place?";
+     messages["joe_scn001_l01"]= "What place?";
+     messages["me_scn001_l02"]=  "That creepy old orphanage...";
+     messages["joe_scn001_l02"]= "Mmmm... just rumours, you know"
+     messages["me_scn001_l03"]=  "What kinda rumours?";
+     messages["joe_scn001_l03"]= "Like, people dissapearing...";
+
+
+     
+     document.getElementById("my_speech").innerHTML = messages["me_scn001_l01"];
+     // document.getElementById("other_speech").innerHTML = messages["joe_scn001_l01"];
+       
+     
      function next(){
        document.getElementById("my_speech").innerHTML = "New";
      }
