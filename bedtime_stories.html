@@ -40,10 +40,10 @@
         </div>
       </div>
       <div style="width: 800px;">
-        <input type="button" value="1 - " onclick="action(1)">
-        <input type="button" value="2 - " onclick="action(2)">
-        <input type="button" value="3 - " onclick="action(3)">
-        <input type="button" value="4 - " onclick="action(4)">        
+        <input type="button" value="&nbsp;">
+        <input type="button" value="&nbsp;">
+        <input type="button" value="&nbsp;">
+        <input type="button" value="&nbsp;">        
       </div>
     </form>
     <p>&copy; <a href="http://www.tranquilinho.com">Tranquilinho</a></p>
@@ -81,7 +81,7 @@
        actions:
                      [{english: "Talk to 1st guy", code: "talk(0)"},
                       {english: "Talk to 2nd guy", code: "talk(1)"},
-                      {english: "Talk to 3rd guy", code: next},
+                      {english: "Fight the 3rd guy", code: next},
                       ]
      };
 
@@ -98,6 +98,9 @@
 
      document.forms[0].elements[1].value="2 - " + current_scene.actions[1].english;
      document.forms[0].elements[1].setAttribute("onclick",current_scene.actions[1].code);
+
+     document.forms[0].elements[2].value="3 - " + current_scene.actions[2].english;
+     document.forms[0].elements[2].setAttribute("onclick",current_scene.actions[2].code);
 
      
      function talk(dialog_number){
