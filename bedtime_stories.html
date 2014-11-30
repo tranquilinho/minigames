@@ -16,31 +16,35 @@
      * {
        font-family: 'Architects Daughter', cursive;
      }
+     .person_name{
+       font-weight: bold;
+     }
+     
     </style>
 
-    <div style="width:60%; margin-left: auto ;  margin-right: auto ; text-align: center;">
+    <div style="width:800px; margin-left: auto ;  margin-right: auto ; text-align: center;">
     <h1 style="margin-top: 2em;">Bedtime stories</h1>
-    <p style="margin-bottom: 4em;">Copy</p>
 
     <form>
-      <table width="90%" border="1">
-        <tr>
-          <td width="50%" rowspan="2">
+      <div style="float: left; width: 358px; height: 500px; border:1px solid grey; text-align: left; padding: 20px;">
             Hey!
-          </td>
-          <td>
-            <p id="my_speech">Hi!</p>
-            <input type="button" value="Next" onclick="next()">
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <p id="other_speech">hO!</p>
-          </td></tr>
-        </table>
+      </div>
+      <div style="width: 358px; margin-left: 400px; height: 500px; border:1px solid grey; text-align: left;  padding: 20px;">
+        <div style="height: 50%; border-bottom:1px solid grey;">
+          <p class="person_name">Me</p>
+          <p id="my_speech">Hi!</p>
+          <input type="button" value="Next" onclick="next()">
+        </div>
+        <div style="height: 50%; ">
+          <p class="person_name">Joe</p>
+          <p id="other_speech">hO!</p>
+        </div>
+      </div>
     </form>
     <p>&copy; <a href="http://www.tranquilinho.com">Tranquilinho</a></p>
     </div>
+
+
     
     <script language="javascript">
 
