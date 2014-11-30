@@ -27,18 +27,23 @@
 
     <form>
       <div style="float: left; width: 358px; height: 500px; border:1px solid grey; text-align: left; padding: 20px;">
-            Hey!
+        <p id="scene_text">&nbsp;</p>
       </div>
       <div style="width: 358px; margin-left: 400px; height: 500px; border:1px solid grey; text-align: left;  padding: 20px;">
         <div style="height: 50%; border-bottom:1px solid grey;">
           <p class="person_name">Me</p>
           <p id="my_speech">&nbsp;</p>
-          <input type="button" value="Next" onclick="next()">
         </div>
         <div style="height: 50%; ">
           <p class="person_name">Joe</p>
           <p id="other_speech">&nbsp;</p>
         </div>
+      </div>
+      <div style="width: 800px;">
+        <input type="button" value="1 - " onclick="action(1)">
+        <input type="button" value="2 - " onclick="action(2)">
+        <input type="button" value="3 - " onclick="action(3)">
+        <input type="button" value="4 - " onclick="action(4)">        
       </div>
     </form>
     <p>&copy; <a href="http://www.tranquilinho.com">Tranquilinho</a></p>
@@ -51,26 +56,54 @@
      // !!!! refactor into its own file, bs_text.js?
      // start with a "simple DB"
      // limit text to 160 characters :-p     
-     var scene=[
-       // scn000
-       [{who: "me",  english: "Have you heard about that strange place?"},
-        {who: "joe", english: "What place?"},
-        {who: "me", english:  "That creepy old orphanage..."},
-        {who: "joe", english: "Mmmm... just rumours, you know"},
-        {who: "me",  english: "What kinda rumours?"},
-        {who: "joe", english:  "Like, people dissapearing..."}
-       ]
-     ];
+     var scenes={};
+     scenes["start"]=
+     { english: "You are in a room with 3 guys. They all look dangerous",
+       dialog_lines:
+       [
+         // d00
+         [{who: "me",  english: "Have you heard about that strange place?"},
+          {who: "joe", english: "What place?"},
+          {who: "me", english:  "That creepy old orphanage..."},
+          {who: "joe", english: "Mmmm... just rumours, you know"},
+          {who: "me",  english: "What kinda rumours?"},
+          {who: "joe", english:  "Like, people dissapearing..."}
+          ],
+         // d01
+         [{who: "me",  english: "Have you heard about that strange place?"},
+          {who: "pete", english: "What place?"},
+          {who: "me", english:  "That creepy old orphanage..."},
+          {who: "pete", english: "Mmmm... just rumours, you know"},
+          {who: "me",  english: "What kinda rumours?"},
+          {who: "pete", english:  "Like, people dissapearing..."}
+          ]
+       ],        
+       actions:
+                     [{english: "Talk to 1st guy", code: "talk(0)"},
+                      {english: "Talk to 2nd guy", code: next},
+                      {english: "Talk to 3rd guy", code: next},
+                      ]
+     };
 
-     var current_scene=0;
+     var current_scene_key="start";
+     var current_scene=scenes[current_scene_key];
+     var current_dialog=0;
      var current_line=0;
-     
-     document.getElementById("my_speech").innerHTML = scene[0][0].english;
-     current_line++;
 
+     
+     document.getElementById("scene_text").innerHTML = current_scene.english;
+
+     document.forms[0].elements[0].value="1 - " + current_scene.actions[0].english;
+     document.forms[0].elements[0].setAttribute("onclick",current_scene.actions[0].code);
+
+     function talk(dialog_number){
+       current_dialog=dialog_number;
+       next();
+     }
+     
      
      function next(){
-       var next_line=scene[current_scene][current_line];
+       var next_line=current_scene.dialog_lines[current_dialog][current_line];
        var target="my_speech";
        if(next_line.who != "me") target="other_speech";
        document.getElementById(target).innerHTML = next_line.english;
