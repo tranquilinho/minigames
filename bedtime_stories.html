@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>Bedtime stories</title>
+    <meta charset="UTF-8">
+    <link href='http://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+  </head>
+  <body style="background: lightgrey;">
+    
+    <style> 
+     table {
+       border-collapse: collapse;
+     }
+     td {
+       padding: 0;
+     }
+     * {
+       font-family: 'Architects Daughter', cursive;
+     }
+    </style>
+
+    <div style="width:60%; margin-left: auto ;  margin-right: auto ; text-align: center;">
+    <h1 style="margin-top: 2em;">Bedtime stories</h1>
+    <p style="margin-bottom: 4em;">Copy</p>
+
+    <form>
+      <table width="90%" border="1">
+        <tr>
+          <td width="50%" rowspan="2">
+            Hey!
+          </td>
+          <td>
+            <p id="my_speech">Hi!</p>
+            <input type="button" value="Next" onclick="next()">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p id="other_speech">hO!</p>
+          </td></tr>
+        </table>
+    </form>
+    <p>&copy; <a href="http://www.tranquilinho.com">Tranquilinho</a></p>
+    </div>
+    
+    <script language="javascript">
+
+     function next(){
+       document.getElementById("my_speech").innerHTML = "New";
+     }
+     
+    </script>
+
+  </body>
+</html>
