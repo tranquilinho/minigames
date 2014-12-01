@@ -53,6 +53,8 @@
     
     <script language="javascript">
 
+     var player={health: 8, level: 1};
+     
      // !!!! refactor into its own file, bs_text.js?
      // start with a "simple DB"
      // limit text to 160 characters :-p     
@@ -82,7 +84,8 @@
        actions:
                      [{english: "Talk", code: "talk(['Joe','Pete','Alex'])"},
                       {english: "Fight", code: "fight(['Joe','Pete','Alex'])"},
-                      ]
+                      ],
+       npcs: { Joe: { health: 10, attacks: ["Fist", "Kick"]}}
      };
 
      var current_scene_key="start";
@@ -153,13 +156,13 @@
        document.forms[0].elements[0].value="1 - Back";
        document.forms[0].elements[0].setAttribute("onclick","clean_dialogs(); assign_actions()");
        
-       document.forms[0].elements[1].value="2 - Fight to " + whom[0];
-       document.forms[0].elements[1].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[0]] + ")" );
+       document.forms[0].elements[1].value="2 - Fight with " + whom[0];
+       document.forms[0].elements[1].setAttribute("onclick","fight_start('" + whom[0] + "')" );
 
-       document.forms[0].elements[2].value="3 - Fight to " + whom[1];
+       document.forms[0].elements[2].value="3 - Fight with " + whom[1];
        document.forms[0].elements[2].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[1]] + ")" );
 
-       document.forms[0].elements[3].value="4 - Fight to " + whom[2];
+       document.forms[0].elements[3].value="4 - Fight with " + whom[2];
        document.forms[0].elements[3].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[2]] + ")" );
        
      }
@@ -194,6 +197,33 @@
        document.getElementById(target).innerHTML = next_line.english;
        current_line++;
      }
+     
+     
+     function fight_start(whom){
+       document.getElementById("other_name").innerHTML = whom;
+
+       var enemy_text = "Health: " + current_scene.npcs[whom].health;
+
+       document.getElementById("other_speech").innerHTML = enemy_text;
+
+       var my_text = "Health: " + player.health;
+       document.getElementById("my_speech").innerHTML = my_text;
+
+       document.forms[0].elements[0].value="1 - Escape";
+       document.forms[0].elements[0].setAttribute("onclick","clean_dialogs(); assign_actions()");
+       
+       document.forms[0].elements[1].value="2 - Defend";
+       document.forms[0].elements[1].setAttribute("onclick","defend()");
+
+       document.forms[0].elements[2].value="3 - Attack";
+       document.forms[0].elements[2].setAttribute("onclick","attack()");
+
+       document.forms[0].elements[3].value="4 - Items";
+       document.forms[0].elements[3].setAttribute("onclick","items()");
+
+
+     }
+     
      
     </script>
 
