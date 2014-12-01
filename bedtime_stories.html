@@ -59,7 +59,7 @@
      var scenes={};
      scenes["start"]=
      { english: "You are in a room with 3 guys. They all look dangerous",
-       dialogs: { Joe: 0, pete:1},
+       dialogs: { Joe: 0, Pete:1},
        dialog_lines:
        [
          // d00
@@ -80,8 +80,8 @@
           ]
        ],        
        actions:
-                     [{english: "Talk", code: "talk(['Joe','pete','alex'])"},
-                      {english: "Fight", code: "fight('joe','pete','alex')"},
+                     [{english: "Talk", code: "talk(['Joe','Pete','Alex'])"},
+                      {english: "Fight", code: "fight(['Joe','Pete','Alex'])"},
                       ]
      };
 
@@ -94,14 +94,38 @@
      document.getElementById("scene_text").innerHTML = current_scene.english;
 
      function assign_actions(){
-       document.forms[0].elements[0].value="1 - " + current_scene.actions[0].english;
-       document.forms[0].elements[0].setAttribute("onclick",current_scene.actions[0].code);
-       
-       document.forms[0].elements[1].value="2 - " + current_scene.actions[1].english;
-       document.forms[0].elements[1].setAttribute("onclick",current_scene.actions[1].code);
+       if(current_scene.actions[0] == undefined){
+         document.forms[0].elements[0].value=" ";
+         document.forms[0].elements[0].onclick=null;
+       }else{
+         document.forms[0].elements[0].value="1 - " + current_scene.actions[0].english;
+         document.forms[0].elements[0].setAttribute("onclick",current_scene.actions[0].code);
+       }
 
-       document.forms[0].elements[2].value="3 - " + current_scene.actions[2].english;
-       document.forms[0].elements[2].setAttribute("onclick",current_scene.actions[2].code);
+       if(current_scene.actions[1] == undefined){
+         document.forms[0].elements[1].value=" ";
+         document.forms[0].elements[1].onclick=null;
+       }else{    
+         document.forms[0].elements[1].value="2 - " + current_scene.actions[1].english;
+         document.forms[0].elements[1].setAttribute("onclick",current_scene.actions[1].code);
+       }
+     
+       if(current_scene.actions[2] == undefined){
+         document.forms[0].elements[2].value=" ";
+         document.forms[0].elements[2].onclick=null;
+       }else{
+         document.forms[0].elements[2].value="3 - " + current_scene.actions[2].english;
+         document.forms[0].elements[2].setAttribute("onclick",current_scene.actions[2].code);
+       }
+
+       if(current_scene.actions[3] == undefined){
+         document.forms[0].elements[3].value=" ";
+         document.forms[0].elements[3].onclick=null;
+       }else{
+         document.forms[0].elements[3].value="4 - " + current_scene.actions[3].english;
+         document.forms[0].elements[3].setAttribute("onclick",current_scene.actions[3].code);
+       }
+       
      }
 
      assign_actions();
@@ -123,6 +147,24 @@
        
      }
 
+     function fight(whom){
+       current_line=0;
+       
+       document.forms[0].elements[0].value="1 - Back";
+       document.forms[0].elements[0].setAttribute("onclick","clean_dialogs(); assign_actions()");
+       
+       document.forms[0].elements[1].value="2 - Fight to " + whom[0];
+       document.forms[0].elements[1].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[0]] + ")" );
+
+       document.forms[0].elements[2].value="3 - Fight to " + whom[1];
+       document.forms[0].elements[2].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[1]] + ")" );
+
+       document.forms[0].elements[3].value="4 - Fight to " + whom[2];
+       document.forms[0].elements[3].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[2]] + ")" );
+       
+     }
+
+     
      function clean_dialogs(){
        document.getElementById("other_name").innerHTML = "&nbsp;";
        document.getElementById("other_speech").innerHTML = "&nbsp;";
