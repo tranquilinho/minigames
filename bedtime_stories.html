@@ -85,7 +85,9 @@
                      [{english: "Talk", code: "talk(['Joe','Pete','Alex'])"},
                       {english: "Fight", code: "fight(['Joe','Pete','Alex'])"},
                       ],
-       npcs: { Joe: { health: 10, attacks: ["Fist", "Kick"]}}
+       npcs: { Joe: { health: 10,
+                      attacks: [{name: "Fist", hit_points: 2, description: "punched your cheek"},
+                                {name: "Kick", hit_points: 4, description: "kicked your ass"}]}}
      };
 
      var current_scene_key="start";
@@ -227,15 +229,30 @@
      }
 
      function attack(whom){
-       var hit_points = 3;
-       if(current_scene.npcs[whom].health > hit_points){
-         current_scene.npcs[whom].health -= hit_points;
+       var player_hit_points = 3;
+       if(current_scene.npcs[whom].health > player_hit_points){
+         current_scene.npcs[whom].health -= player_hit_points;
          var enemy_text = "Health: " + current_scene.npcs[whom].health;
          document.getElementById("other_speech").innerHTML = enemy_text;
        }else{
          var enemy_text = whom + " died";
          document.getElementById("other_speech").innerHTML = enemy_text;
-       }         
+       }
+
+       var whom_attacks = current_scene.npcs[whom].attacks; 
+       var random_index=Math.floor(Math.random() * whom_attacks.length);
+       var whom_attack = current_scene.npcs[whom].attacks[random_index];
+       var whom_hit_points = whom_attack.hit_points;
+       log(whom + " " + whom_attack.description);
+       if(player.health > whom_hit_points){
+         player.health -= whom_hit_points;
+         var my_text = "Health: " + player.health;
+         document.getElementById("my_speech").innerHTML = my_text;
+       }else{
+         var my_text = "You died... ";
+         document.getElementById("my_speech").innerHTML = my_text;
+       }
+       
      }
      
     </script>
