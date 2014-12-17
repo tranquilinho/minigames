@@ -215,7 +215,7 @@
        document.forms[0].elements[0].setAttribute("onclick","log('You escaped'); clean_dialogs(); assign_actions()");
        
        document.forms[0].elements[1].value="2 - Defend";
-       document.forms[0].elements[1].setAttribute("onclick","defend()");
+       document.forms[0].elements[1].setAttribute("onclick","defend('" + whom + "')");
 
        document.forms[0].elements[2].value="3 - Attack";
        document.forms[0].elements[2].setAttribute("onclick","attack('" + whom + "')");
@@ -251,8 +251,24 @@
        }else{
          var my_text = "You died... ";
          document.getElementById("my_speech").innerHTML = my_text;
+       }      
+     }
+
+
+     function defend(from){
+       var from_attacks = current_scene.npcs[from].attacks; 
+       var random_index=Math.floor(Math.random() * from_attacks.length);
+       var from_attack = current_scene.npcs[from].attacks[random_index];
+       var from_hit_points = from_attack.hit_points / 2;
+       log(from + " " + from_attack.description + " but (luckily) you were on guard");
+       if(player.health > from_hit_points){
+         player.health -= from_hit_points;
+         var my_text = "Health: " + player.health;
+         document.getElementById("my_speech").innerHTML = my_text;
+       }else{
+         var my_text = "Your defense wasn't enough - you died... ";
+         document.getElementById("my_speech").innerHTML = my_text;
        }
-       
      }
      
     </script>
