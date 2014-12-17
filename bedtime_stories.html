@@ -26,10 +26,10 @@
     <h1 style="margin-top: 2em;">Bedtime stories</h1>
 
     <form>
-      <div style="float: left; width: 358px; height: 500px; border:1px solid grey; text-align: left; padding: 20px;">
+      <div style="float: left; width: 358px; height: 450px; border:1px solid grey; text-align: left; padding: 20px;">
         <p id="scene_text">&nbsp;</p>
       </div>
-      <div style="width: 358px; margin-left: 400px; height: 500px; border:1px solid grey; text-align: left;  padding: 20px;">
+      <div style="width: 358px; margin-left: 400px; height: 450px; border:1px solid grey; text-align: left;  padding: 20px;">
         <div style="height: 50%; border-bottom:1px solid grey;">
           <p class="person_name">Me</p>
           <p id="my_speech">&nbsp;</p>
@@ -210,20 +210,33 @@
        document.getElementById("my_speech").innerHTML = my_text;
 
        document.forms[0].elements[0].value="1 - Escape";
-       document.forms[0].elements[0].setAttribute("onclick","clean_dialogs(); assign_actions()");
+       document.forms[0].elements[0].setAttribute("onclick","log('You escaped'); clean_dialogs(); assign_actions()");
        
        document.forms[0].elements[1].value="2 - Defend";
        document.forms[0].elements[1].setAttribute("onclick","defend()");
 
        document.forms[0].elements[2].value="3 - Attack";
-       document.forms[0].elements[2].setAttribute("onclick","attack()");
+       document.forms[0].elements[2].setAttribute("onclick","attack('" + whom + "')");
 
        document.forms[0].elements[3].value="4 - Items";
        document.forms[0].elements[3].setAttribute("onclick","items()");
-
-
      }
      
+     function log(text){
+       document.getElementById("scene_text").innerHTML += "<br/>" + text;
+     }
+
+     function attack(whom){
+       var hit_points = 3;
+       if(current_scene.npcs[whom].health > hit_points){
+         current_scene.npcs[whom].health -= hit_points;
+         var enemy_text = "Health: " + current_scene.npcs[whom].health;
+         document.getElementById("other_speech").innerHTML = enemy_text;
+       }else{
+         var enemy_text = whom + " died";
+         document.getElementById("other_speech").innerHTML = enemy_text;
+       }         
+     }
      
     </script>
 
