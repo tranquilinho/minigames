@@ -53,14 +53,18 @@
     
     <script language="javascript">
 
+     // !!!! test cases - it's not practical to do testing by hand...
+
+     // http://stackoverflow.com/questions/11582512/how-to-get-url-parameters-with-javascript/11582513#11582513
+     function getURLParameter(name) {
+       return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+     }
+     
      var player={health: 8, level: 1,
                  attacks: {Hands: {hit_points: 2, description: "applied your deadly fist"},
                            Feet:  {hit_points: 4, description: "kicked ass"}}};
      
-     // !!!! test cases - it's not practical to do testing by hand...
 
-
-     
      // !!!! refactor into its own file, bs_text.js?
      // start with a "simple DB"
      // limit text to 160 characters :-p     
@@ -169,10 +173,10 @@
        document.forms[0].elements[1].setAttribute("onclick","fight_start('" + whom[0] + "')" );
 
        document.forms[0].elements[2].value="3 - Fight with " + whom[1];
-       document.forms[0].elements[2].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[1]] + ")" );
+       document.forms[0].elements[2].setAttribute("onclick","fight_start('" + whom[1] + "')" );
 
        document.forms[0].elements[3].value="4 - Fight with " + whom[2];
-       document.forms[0].elements[3].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[2]] + ")" );
+       document.forms[0].elements[3].setAttribute("onclick","fight_start('" + whom[2] + "')" );
        
      }
 
@@ -301,6 +305,15 @@
            var my_text = "Your defense wasn't enough - you died... ";
            document.getElementById("my_speech").innerHTML = my_text;
          }                                                            }
+     }
+
+     function fightTest(){
+       fight_start("Joe");
+     }
+
+     var startTest = getURLParameter("startTest");
+     if (startTest != null){
+       eval(startTest+"()");
      }
      
     </script>
