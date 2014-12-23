@@ -93,8 +93,8 @@
        ],
        // !!!! items action
        actions:
-                     [{english: "Talk", code: "talk(['Joe','Pete','Alex'])"},
-                      {english: "Fight", code: "fight(fight_tree.F001)"},
+                     [{english: "Talk", result: "talk(['Joe','Pete','Alex'])"},
+                      {english: "Fight", result: "fight(fight_tree.F001)"},
                       ],
        npcs: { Joe: { health: 10,
                       attacks: [{name: "Fist", hit_points: 2, description: "punched your cheek"},
@@ -104,12 +104,44 @@
 
      var fight_tree={
         F001: { desc: "Joe is staring at you,  Pete is giving you his back while talking with Alex (who is \
-gleefully resting against the wall" , actions: [
-           {label: "Escape", result: "escape()", next: null},
-           {label: "Push Pete against Joe", result: null, next: "F002"},
-           {label: "Wait", result: null, next: "F003"},
-           {label: "Break Joe face in 2 halves", result:"attack('Joe','Hands')", next: "F004"}]
-        }     
+gleefully resting against the wall). Joe is big and apparently strong. It's hard to evaluate the other 2 guys" , actions: [
+           {english: "Escape", result: "escape()", next: null},
+           {english: "Push Pete against Alex", result: "fight(fight_tree.F002)"},
+           {english: "Wait", result: "fight(fight_tree.F003)"},
+           {english: "Break Joe face in 2 halves", result:"attack('Joe','Hands'); fight(fight_tree.F004)"}]
+                },     // F001
+        F002: { desc: "Pete stumbled on Alex and both are stunned. Joe rushes against you furiouslly"
+                , actions: [
+           {english: "Run away", result: "escape()", next: null},
+           {english: "Side-step defense", result: "fight(fight_tree.F006)"},
+           {english: "Bring Pete and Alex to the ground", result: "fight(fight_tree.F)"},
+           {english: "Break Joe face in 2 halves", result:"attack('Joe','Hands'); fight(fight_tree.F)"}]
+        },     // F002
+        F003: { desc: "Joe joins Pete and Alex conversation",
+                actions: [
+           {english: "Escape", result: "escape()", next: null},
+           {english: "Push Pete against Joe", result: null, next: "F"},
+           {english: "Wait", result: null, next: "F"},
+           {english: "Break Joe face in 2 halves", result:"attack('Joe','Hands')", next: "F"}]
+        },     // F003
+        F004: { desc: "You try to strike hard and fast but Joe saw you coming and now is on guard. Joe is also telling \
+ Pete and Alex about your intentions" , actions: [
+           {english: "Run! Run!", result: "escape()", next: null},
+           {english: "Kneel and beg for mercy", result: null, next: "F"},
+           {english: "Go on with your plan and kick Joe's ass", result: null, next: "F"},
+           {english: "Do a side sommersault and break into Pete and Alex", result:"attack('Joe','Hands')", next: "F"}]
+        },     // F004
+        F006: { desc: "You escaped the punch by 2 inches. Pete and Alex realized what's happening and now are facing you" , actions: [
+           {english: "Give your back to Joe and run like hell", result: "fight(fight_tree.F007)"},
+           {english: "Jump hard and hit hard Joe's nose with your head", result: "fight(fight_tree.F)"},
+           {english: "Trip Joe", result: "fight(fight_tree.F003)"},
+           {english: "Switch target to Pete and/or Alex", result:"attack('Joe','Hands'); fight(fight_tree.F)"}]
+                },     // F006
+        F007: { desc: "You turn fast, but before you get enough speed Joe catches you and the 3 guys merrily crack your \
+ass", actions:[
+           {english: "Restart fight", result: "fight(fight_tree.F001)"},
+           {english: "Restart screen", result: "clean_dialogs(); assign_actions();"}]
+                }     // F007       
      };
 
      var current_scene_key="start";
@@ -120,48 +152,48 @@ gleefully resting against the wall" , actions: [
      
      document.getElementById("scene_text").innerHTML = current_scene.english;
 
-     function assign_actions(){
-       if(current_scene.actions[0] == undefined){
+     function assign_actions(actions){
+       if(actions[0] == undefined){
          document.forms[0].elements[0].value=" ";
          document.forms[0].elements[0].onclick=null;
        }else{
-         document.forms[0].elements[0].value="1 - " + current_scene.actions[0].english;
-         document.forms[0].elements[0].setAttribute("onclick",current_scene.actions[0].code);
+         document.forms[0].elements[0].value="1 - " + actions[0].english;
+         document.forms[0].elements[0].setAttribute("onclick",actions[0].result);
        }
 
-       if(current_scene.actions[1] == undefined){
+       if(actions[1] == undefined){
          document.forms[0].elements[1].value=" ";
          document.forms[0].elements[1].onclick=null;
        }else{    
-         document.forms[0].elements[1].value="2 - " + current_scene.actions[1].english;
-         document.forms[0].elements[1].setAttribute("onclick",current_scene.actions[1].code);
+         document.forms[0].elements[1].value="2 - " + actions[1].english;
+         document.forms[0].elements[1].setAttribute("onclick",actions[1].result);
        }
      
-       if(current_scene.actions[2] == undefined){
+       if(actions[2] == undefined){
          document.forms[0].elements[2].value=" ";
          document.forms[0].elements[2].onclick=null;
        }else{
-         document.forms[0].elements[2].value="3 - " + current_scene.actions[2].english;
-         document.forms[0].elements[2].setAttribute("onclick",current_scene.actions[2].code);
+         document.forms[0].elements[2].value="3 - " + actions[2].english;
+         document.forms[0].elements[2].setAttribute("onclick",actions[2].result);
        }
 
-       if(current_scene.actions[3] == undefined){
+       if(actions[3] == undefined){
          document.forms[0].elements[3].value=" ";
          document.forms[0].elements[3].onclick=null;
        }else{
-         document.forms[0].elements[3].value="4 - " + current_scene.actions[3].english;
-         document.forms[0].elements[3].setAttribute("onclick",current_scene.actions[3].code);
+         document.forms[0].elements[3].value="4 - " + actions[3].english;
+         document.forms[0].elements[3].setAttribute("onclick",actions[3].result);
        }
        
      }
 
-     assign_actions();
+     assign_actions(current_scene.actions);
 
      function talk(whom){
        current_line=0;
        
        document.forms[0].elements[0].value="1 - Back";
-       document.forms[0].elements[0].setAttribute("onclick","clean_dialogs(); assign_actions()");
+       document.forms[0].elements[0].setAttribute("onclick","clean_dialogs(); assign_actions(current_scene.actions)");
        
        document.forms[0].elements[1].value="2 - Talk to " + whom[0];
        document.forms[0].elements[1].setAttribute("onclick","dialog_start(" + current_scene.dialogs[whom[0]] + ")" );
@@ -175,9 +207,11 @@ gleefully resting against the wall" , actions: [
      }
 
      function fight(current_node){
+       log(current_node.desc);
 
-       document.forms[0].elements[0].value="1 - " + current_node.actions[0].label;
-       document.forms[0].elements[0].setAttribute("onclick", current_node.actions[0].result);
+       assign_actions(current_node.actions);
+/*       document.forms[0].elements[0].value="1 - " + current_node.actions[0].label; - english
+       document.forms[0].elements[0].setAttribute("onclick", current_node.actions[0].result); - code
        
        document.forms[0].elements[1].value="2 - " + current_node.actions[1].label;
        document.forms[0].elements[1].setAttribute("onclick", current_node.actions[1].result);
@@ -187,9 +221,12 @@ gleefully resting against the wall" , actions: [
 
        document.forms[0].elements[3].value="4 - " + current_node.actions[3].label;
        document.forms[0].elements[3].setAttribute("onclick", current_node.actions[3].result);
-       
+  */     
      }
 
+     function fight_next(){
+
+     }
      
      function clean_dialogs(){
        document.getElementById("other_name").innerHTML = "&nbsp;";
@@ -261,7 +298,7 @@ gleefully resting against the wall" , actions: [
        if(player.health > 0){
          log('You escaped');
          clean_dialogs();
-         assign_actions();
+         assign_actions(current_scene.actions);
        }
      }
      
