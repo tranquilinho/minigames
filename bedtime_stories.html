@@ -94,11 +94,22 @@
        // !!!! items action
        actions:
                      [{english: "Talk", code: "talk(['Joe','Pete','Alex'])"},
-                      {english: "Fight", code: "fight(['Joe','Pete','Alex'])"},
+                      {english: "Fight", code: "fight(fight_tree.F001)"},
                       ],
        npcs: { Joe: { health: 10,
                       attacks: [{name: "Fist", hit_points: 2, description: "punched your cheek"},
                                 {name: "Kick", hit_points: 4, description: "kicked your ass"}]}}
+       };
+
+
+     var fight_tree={
+        F001: { desc: "Joe is staring at you,  Pete is giving you his back while talking with Alex (who is \
+gleefully resting against the wall" , actions: [
+           {label: "Escape", result: "escape()", next: null},
+           {label: "Push Pete against Joe", result: null, next: "F002"},
+           {label: "Wait", result: null, next: "F003"},
+           {label: "Break Joe face in 2 halves", result:"attack('Joe','Hands')", next: "F004"}]
+        }     
      };
 
      var current_scene_key="start";
@@ -163,20 +174,19 @@
        
      }
 
-     function fight(whom){
-       current_line=0;
-       
-       document.forms[0].elements[0].value="1 - Back";
-       document.forms[0].elements[0].setAttribute("onclick","clean_dialogs(); assign_actions()");
-       
-       document.forms[0].elements[1].value="2 - Fight with " + whom[0];
-       document.forms[0].elements[1].setAttribute("onclick","fight_start('" + whom[0] + "')" );
+     function fight(current_node){
 
-       document.forms[0].elements[2].value="3 - Fight with " + whom[1];
-       document.forms[0].elements[2].setAttribute("onclick","fight_start('" + whom[1] + "')" );
+       document.forms[0].elements[0].value="1 - " + current_node.actions[0].label;
+       document.forms[0].elements[0].setAttribute("onclick", current_node.actions[0].result);
+       
+       document.forms[0].elements[1].value="2 - " + current_node.actions[1].label;
+       document.forms[0].elements[1].setAttribute("onclick", current_node.actions[1].result);
 
-       document.forms[0].elements[3].value="4 - Fight with " + whom[2];
-       document.forms[0].elements[3].setAttribute("onclick","fight_start('" + whom[2] + "')" );
+       document.forms[0].elements[2].value="3 - " + current_node.actions[2].label;
+       document.forms[0].elements[2].setAttribute("onclick", current_node.actions[2].result);
+
+       document.forms[0].elements[3].value="4 - " + current_node.actions[3].label;
+       document.forms[0].elements[3].setAttribute("onclick", current_node.actions[3].result);
        
      }
 
