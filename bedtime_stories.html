@@ -94,17 +94,21 @@
        // !!!! items action
        actions:
                      [{english: "Talk", result: "talk(['Joe','Pete','Alex'])"},
-                      {english: "Fight", result: "fight(fight_tree.F001)"},
+                      {english: "Fight", result: "fight_tree.F001.player_health=player.health; fight(fight_tree.F001)"},
                       ],
        npcs: { Joe: { health: 10,
                       attacks: [{name: "Fist", hit_points: 2, description: "punched your cheek"},
-                                {name: "Kick", hit_points: 4, description: "kicked your ass"}]}}
-       };
+                                {name: "Kick", hit_points: 4, description: "kicked your ass"}]},
+       Pete: { health: 10,
+                attacks: [{name: "Fist", hit_points: 2, description: "punched your cheek"}]},
+       Alex: { health: 10,
+                      attacks: [{name: "Fist", hit_points: 2, description: "punched your cheek"}]}
+       }};
 
 
      var fight_tree={
-        F001: { desc: "Joe is staring at you,  Pete is giving you his back while talking with Alex (who is \
-gleefully resting against the wall). Joe is big and apparently strong. It's hard to evaluate the other 2 guys" , actions: [
+        F001: { start: true, desc: "Joe is staring at you,  Pete is giving you his back while talking with Alex \
+ (who is gleefully resting against the wall). Joe is big and apparently strong. It's hard to evaluate the other 2 guys" , actions: [
            {english: "Escape", result: "escape()", next: null},
            {english: "Push Pete against Alex", result: "fight(fight_tree.F002)"},
            {english: "Wait", result: "fight(fight_tree.F003)"},
@@ -207,8 +211,17 @@ ass", actions:[
      }
 
      function fight(current_node){
+       if(current_node.start){
+         document.getElementById("scene_text").innerHTML = "";
+         player.health = current_node.player_health;
+       }
+
        log(current_node.desc);
 
+       show_enemy_status(["Joe", "Pete", "Alex"]);
+       show_player_status();
+
+       
        assign_actions(current_node.actions);
 /*       document.forms[0].elements[0].value="1 - " + current_node.actions[0].label; - english
        document.forms[0].elements[0].setAttribute("onclick", current_node.actions[0].result); - code
@@ -289,9 +302,15 @@ ass", actions:[
        document.getElementById("my_name").innerHTML = my_text;
      }
 
-     function show_enemy_status(whom){
-       var enemy_text = whom + " . HP: " + current_scene.npcs[whom].health;
-       document.getElementById("other_name").innerHTML = enemy_text;
+     function show_enemy_status(enemies){
+       var enemy_text="";
+       for (var i=0; i < enemies.length; i++){
+         var enemy = current_scene.npcs[enemies[i]];
+         if(enemy != undefined){
+           enemy_text += enemies[i] + " . HP: " + enemy.health + ". ";
+         }
+       }
+       document.getElementById("other_name").innerHTML = enemy_text;       
      }
 
      function escape(){
