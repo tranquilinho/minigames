@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Bedtime stories</title>
+    <title>Bedtime fights</title>
     <meta charset="UTF-8">
     <link href='http://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
   </head>
@@ -23,7 +23,7 @@
     </style>
 
     <div style="width:800px; margin-left: auto ;  margin-right: auto ; text-align: center;">
-    <h1 style="margin-top: 2em;">Bedtime stories</h1>
+    <h1 style="margin-top: 2em;">Bedtime fights</h1>
 
     <form>
       <div style="float: left; width: 358px; height: 450px; border:1px solid grey; text-align: left; padding: 20px;">
@@ -31,12 +31,12 @@
       </div>
       <div style="width: 358px; margin-left: 400px; height: 450px; border:1px solid grey; text-align: left;  padding: 20px;">
         <div style="height: 50%; border-bottom:1px solid grey;">
-          <p class="person_name" id="my_name">Me</p>
-          <p id="my_speech">&nbsp;</p>
+          <p class="person_name" id="player_name">Me</p>
+          <p id="player_text">&nbsp;</p>
         </div>
         <div style="height: 50%; ">
-          <p class="person_name" id="other_name">&nbsp;</p>
-          <p id="other_speech">&nbsp;</p>
+          <p class="person_name" id="npc_name">&nbsp;</p>
+          <p id="npc_text">&nbsp;</p>
         </div>
       </div>
       <div style="width: 800px;">
@@ -148,13 +148,8 @@ ass", actions:[
                 }     // F007       
      };
 
-     var current_scene_key="start";
-     var current_scene=scenes[current_scene_key];
-     var current_dialog=-1;
-     var current_line=0;
+ 
 
-     
-     document.getElementById("scene_text").innerHTML = current_scene.english;
 
      function assign_actions(actions){
        if(actions[0] == undefined){
@@ -191,7 +186,7 @@ ass", actions:[
        
      }
 
-     assign_actions(current_scene.actions);
+
 
      function talk(whom){
        current_line=0;
@@ -242,16 +237,16 @@ ass", actions:[
      }
      
      function clean_dialogs(){
-       document.getElementById("other_name").innerHTML = "&nbsp;";
-       document.getElementById("other_speech").innerHTML = "&nbsp;";
-       document.getElementById("my_speech").innerHTML = "&nbsp;";
+       document.getElementById("npc_name").innerHTML = "&nbsp;";
+       document.getElementById("npc_text").innerHTML = "&nbsp;";
+       document.getElementById("player_text").innerHTML = "&nbsp;";
      }
      
      function dialog_start(dialog_number){
        if(dialog_number != current_dialog){
          current_line=0;
-         document.getElementById("other_name").innerHTML = "&nbsp;";
-         document.getElementById("other_speech").innerHTML = "&nbsp;";
+         document.getElementById("npc_name").innerHTML = "&nbsp;";
+         document.getElementById("npc_text").innerHTML = "&nbsp;";
        }
        current_dialog=dialog_number;
        dialog_next();
@@ -261,11 +256,11 @@ ass", actions:[
      function dialog_next(){
        var next_line=current_scene.dialog_lines[current_dialog][current_line];
        var speaker="me"
-       var target="my_speech";
+       var target="player_text";
        if(next_line.who != "me"){
-         target="other_speech";
+         target="npc_text";
          speaker=next_line.who;
-         document.getElementById("other_name").innerHTML = speaker;
+         document.getElementById("npc_name").innerHTML = speaker;
        }
        document.getElementById(target).innerHTML = next_line.english;
        current_line++;
@@ -273,7 +268,7 @@ ass", actions:[
      
      
      function fight_start(whom){
-       document.getElementById("other_name").innerHTML = whom;
+       document.getElementById("npc_name").innerHTML = whom;
 
        show_enemy_status(whom);
        show_player_status();
@@ -299,20 +294,24 @@ ass", actions:[
 
      function show_player_status(){
        var my_text = "Me. HP: " + player.health;
-       document.getElementById("my_name").innerHTML = my_text;
+       document.getElementById("player_name").innerHTML = my_text;
      }
 
      function show_enemy_status(enemies){
-       var enemy_text="";
+       var npc_text="";
        for (var i=0; i < enemies.length; i++){
          var enemy = current_scene.npcs[enemies[i]];
          if(enemy != undefined){
-           enemy_text += enemies[i] + " . HP: " + enemy.health + ". ";
+           npc_text += enemies[i] + " . HP: " + enemy.health + ". ";
          }
        }
-       document.getElementById("other_name").innerHTML = enemy_text;       
+       document.getElementById("npc_name").innerHTML = npc_text;       
      }
 
+     function show_npc(npc){
+
+     }
+     
      function escape(){
        if(player.health > 0){
          log('You escaped');
@@ -333,8 +332,8 @@ ass", actions:[
            show_enemy_status(whom);
          }else{
            show_enemy_status(whom);           
-           var enemy_text = whom + " died";
-           document.getElementById("other_speech").innerHTML = enemy_text;
+           var npc_text = whom + " died";
+           document.getElementById("npc_text").innerHTML = npc_text;
          }
        }         
        var whom_attacks = current_scene.npcs[whom].attacks; 
@@ -351,7 +350,7 @@ ass", actions:[
          }
          show_player_status();
          var my_text = "You died... ";
-         document.getElementById("my_speech").innerHTML = my_text;
+         document.getElementById("player_text").innerHTML = my_text;
        }
      }
 
@@ -369,7 +368,7 @@ ass", actions:[
          }else{
            show_player_status();
            var my_text = "Your defense wasn't enough - you died... ";
-           document.getElementById("my_speech").innerHTML = my_text;
+           document.getElementById("player_text").innerHTML = my_text;
          }                                                            }
      }
 
@@ -381,7 +380,26 @@ ass", actions:[
      if (startTest != null){
        eval(startTest+"()");
      }
-     
+
+
+     // "main()"
+
+     var current_scene_key="start";
+     var current_scene=scenes[current_scene_key];
+     var current_dialog=-1;
+     var current_line=0;
+
+     var fight_actions = [
+       {english: "Defend", result: "talk(['Joe','Pete','Alex'])"},
+       {english: "Attack", result: "fight_tree.F001.player_health=player.health; fight(fight_tree.F001)"},
+       {english: "Floor", result: ""}
+     ];
+
+     var joe={name: "Joe", looks: "Serial Killer 80%", health: 10, experience: 10};
+
+     // document.getElementById("scene_text").innerHTML = current_scene.english;     
+     assign_actions(fight_actions);
+        
     </script>
 
   </body>
