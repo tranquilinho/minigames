@@ -60,9 +60,6 @@
        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
      }
      
-     var player={health: 8, level: 1,
-                 attacks: {Hands: {hit_points: 2, description: "applied your deadly fist"},
-                           Feet:  {hit_points: 4, description: "kicked ass"}}};
      
 
      // !!!! refactor into its own file, bs_text.js?
@@ -292,9 +289,9 @@ ass", actions:[
        document.getElementById("scene_text").innerHTML += "<br/>" + text;
      }
 
-     function show_player_status(){
-       var my_text = "Me. HP: " + player.health;
-       document.getElementById("player_name").innerHTML = my_text;
+     function show_player_status(player){
+       document.getElementById("player_name").innerHTML = player.name + ". " + player.health + " HP. EXP: " + player.experience;
+       document.getElementById("player_text").innerHTML = player.looks;              
      }
 
      function show_enemy_status(enemies){
@@ -309,7 +306,8 @@ ass", actions:[
      }
 
      function show_npc(npc){
-
+       document.getElementById("npc_name").innerHTML = npc.name + ". " + npc.health + " HP. EXP: " + npc.experience;
+       document.getElementById("npc_text").innerHTML = npc.looks;              
      }
      
      function escape(){
@@ -396,10 +394,12 @@ ass", actions:[
      ];
 
      var joe={name: "Joe", looks: "Serial Killer 80%", health: 10, experience: 10};
-
+     var player={name: "Me", looks: "Inoffensive 100%", health: 8, experience: 6};
+     
      // document.getElementById("scene_text").innerHTML = current_scene.english;     
      assign_actions(fight_actions);
-        
+     show_player_status(player);
+     show_npc(joe);
     </script>
 
   </body>
