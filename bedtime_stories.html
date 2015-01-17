@@ -43,7 +43,11 @@
         <input type="button" value="&nbsp;">
         <input type="button" value="&nbsp;">
         <input type="button" value="&nbsp;">
-        <input type="button" value="&nbsp;">        
+        <input type="button" value="&nbsp;">
+
+        <input type="radio" name="distance" value="closer">Get closer
+        <input type="radio" name="distance" value="keep" checked="checked">Keep distance
+        <input type="radio" name="distance" value="away">Get away
       </div>
     </form>
     <p>&copy; <a href="http://www.tranquilinho.com">Tranquilinho</a></p>
@@ -291,7 +295,7 @@ ass", actions:[
 
      function show_player_status(player){
        document.getElementById("player_name").innerHTML = player.name + ". " + player.health + " HP. EXP: " + player.experience;
-       document.getElementById("player_text").innerHTML = player.looks;              
+       document.getElementById("player_text").innerHTML = player.looks + "<br>" + player.position;              
      }
 
      function show_enemy_status(enemies){
@@ -307,7 +311,7 @@ ass", actions:[
 
      function show_npc(npc){
        document.getElementById("npc_name").innerHTML = npc.name + ". " + npc.health + " HP. EXP: " + npc.experience;
-       document.getElementById("npc_text").innerHTML = npc.looks;              
+       document.getElementById("npc_text").innerHTML = npc.looks + "<br>" + npc.position;              
      }
      
      function escape(){
@@ -393,8 +397,8 @@ ass", actions:[
        {english: "Floor", result: ""}
      ];
 
-     var joe={name: "Joe", looks: "Serial Killer 80%", health: 10, experience: 10};
-     var player={name: "Me", looks: "Inoffensive 100%", health: 8, experience: 6};
+     var joe={name: "Joe", looks: "Serial Killer 80%", health: 10, experience: 10, position: "middle"};
+     var player={name: "Me", looks: "Inoffensive 100%", health: 8, experience: 6, position: "middle"};
      
      // document.getElementById("scene_text").innerHTML = current_scene.english;     
      assign_actions(fight_actions);
