@@ -167,7 +167,17 @@ ass", actions:[
        }
      }
 
+     function assign_action(action, button_index){
+         if(action == undefined){
+           document.forms[0].elements[button_index].value=" ";
+           document.forms[0].elements[button_index].onclick=null;
+         }else{
+           document.forms[0].elements[button_index].value = button_index + " - " + action.english;
+           document.forms[0].elements[button_index].setAttribute("onclick", action.result);
+         }
+     }
 
+     
 
      function talk(whom){
        current_line=0;
@@ -323,39 +333,97 @@ ass", actions:[
        }
      }
      
-     function attack(whom,using){
+     function attack(){
        if(player.health > 0){
-         // !!!! take into account the item the player might have in the hands...
-         var player_attack = player.attacks[using];
-         var player_hit_points = player_attack.hit_points;
+         distance += player_movement();
 
-         log("You " + player_attack.description);       
-         if(current_scene.npcs[whom].health >= player_hit_points){
-           current_scene.npcs[whom].health -= player_hit_points;
-           show_enemy_status(whom);
+         if(enemy.attitude > 70){
+           // step closer, try floor
+           distance -= 0.5;
+         }else if(enemy.attitude > 40){
+           // keep distance, attack/defense
+         }else if (enemy.attitude < 30 ){
+           // step back, deffense
+           distance += 0.5;
+         }
+         
+         if(distance < 0) distance = 0;
+
+         if(fight_actions.attack.difficulty * player.experience >= 0.3){
+           var base_damage = player.power;
+           var fight_description = "Player attacks" + enemy.name;           
          }else{
-           show_enemy_status(whom);           
-           var npc_text = whom + " died";
-           document.getElementById("npc_text").innerHTML = npc_text;
+           var fight_description = "Player tries to attack " + enemy.name + " but fails";
+           var base_damage = 0;
          }
-       }         
-       var whom_attacks = current_scene.npcs[whom].attacks; 
-       var random_index=Math.floor(Math.random() * whom_attacks.length);
-       var whom_attack = current_scene.npcs[whom].attacks[random_index];
-       var whom_hit_points = whom_attack.hit_points;
-       log(whom + " " + whom_attack.description);
-       if(player.health > whom_hit_points){
-         player.health -= whom_hit_points;
-         show_player_status();
-       }else{
-         if(player.health > 0){
-           player.health -= whom_hit_points;
+
+         var enemy_damage = 0;
+         var player_damage = 0;
+         
+         // !!!! take into account the item the player might have in the hands...
+         if(distance > 1){
+           if(enemy.attitude > 70){
+             // step closer, try floor
+             var enemy_reaction = fight_actions.attack;
+           }else if(enemy.attitude > 40){
+             // on guard
+             var enemy_reaction = fight_actions.on_guard;           
+           }else if (enemy.attitude < 30 ){
+             // deffense
+             var enemy_reaction = fight_actions.defend;           
+           }
+
+           enemy_damage = 0;
+           
+         }else if (distance >= 0.5){
+           //dodge/counter attack
+           if(enemy.attitude > 70){
+             var enemy_reaction = fight_actions.attack;
+             enemy_damage = player.power;
+             player_damage = base_damage;
+           }else if(enemy.attitude > 40){
+             // dodge
+             var enemy_reaction = fight_actions.dodge;
+             enemy_damage = 0;                                           
+           }else if (enemy.attitude < 30 ){
+             // dodge
+             var enemy_reaction = fight_actions.dodge;
+             enemy_damage = 0;                                           
+           }
+           
+         }else{
+           // block / counter attack
+           if(enemy.attitude > 70){
+             // try floor
+             var enemy_reaction = fight_actions.attack;
+             enemy_damage = base_damage;
+             player_damage = enemy.power;             
+           }else if(enemy.attitude > 40){
+             // block
+             var enemy_reaction = fight_actions.block;
+             enemy_damage = 0.5 * base_damage;                                           
+           }else if (enemy.attitude < 30 ){
+             // block
+             var enemy_reaction = fight_actions.block;
+             enemy_damage = 0.5 * base_damage;
+           }
          }
-         show_player_status();
-         var my_text = "You died... ";
-         document.getElementById("player_text").innerHTML = my_text;
+
+         log(fight_description + " (damage " + enemy_damage + "), enemy " + enemy_reaction.english + " (damage: " + player_damage + "). Distance: " + distance);            
+
+         player.health -= player_damage;
+         if (player.health <= 0){
+           player.health = 0;
+         }
+         enemy.health -= enemy_damage;
+         if (enemy.health <= 0){
+           enemy.health = 0;
+         }
+         show_player_status(player);
+         show_enemy_status(enemy);         
        }
-     }
+     } // attack()
+     
 
      // player "defends": stays on guard, blocks, dodges or counter-attacks
      function defend(){
@@ -433,8 +501,12 @@ ass", actions:[
      var current_line=0;
 
      var fight_actions = {
-       defend: {english: "Defend", result: "defend()", difficulty: 0.2},
+       on_guard: {english: "On guard", result: "defend()", difficulty: 0.2},
+       dodge: {english: "Dodge", result: "defend()", difficulty: 0.2},
+       block: {english: "Block", result: "defend()", difficulty: 0.2},
+       defend: {english: "Defend", result: "defend()", difficulty: 0.2},       
        attack: {english: "Attack", result: "attack()", difficulty: 0.6},
+       fail: {english: "Fail", result: "attack()", difficulty: 0.6},       
        floor: {english: "Floor", result: "floor()", difficulty: 0.8},
        // pretend you are collapsing, or show a fake attitude
        fake: {english: "Fake", result: "fake()"}
@@ -461,7 +533,12 @@ ass", actions:[
      
      // document.getElementById("scene_text").innerHTML = current_scene.english;
      log("Distance: " + distance);
-     assign_actions(fight_actions);
+
+     assign_action(fight_actions.defend, 0);
+     assign_action(fight_actions.attack, 1);
+     assign_action(fight_actions.fake, 2);
+     assign_action(fight_actions.floor, 3);
+     
      show_player_status(player);
      show_npc(joe);
 
