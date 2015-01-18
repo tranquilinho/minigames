@@ -58,6 +58,7 @@
     <script language="javascript">
 
      // !!!! test cases - it's not practical to do testing by hand...
+     // !!!! specifically, try the different fighter combinations of player / npc (@see attack(), defend() )
 
      // http://stackoverflow.com/questions/11582512/how-to-get-url-parameters-with-javascript/11582513#11582513
      function getURLParameter(name) {
@@ -332,161 +333,108 @@ ass", actions:[
          assign_actions(current_scene.actions);
        }
      }
-     
+
+     // player intention is to "attack"
      function attack(){
-       // organize interaction in 2 turns: player initiative and enemy initiative
        if(player.health > 0){
-         // MOVING takes more time, hence movement is done only once, in the first turn
+         var enemy_base_damage = 0, player_base_damage = 0;
+         
          distance += player_movement();
 
+         if(distance < 0) distance = 0;
+
+         // ENEMY PLAN (movement + action)
          if(enemy.attitude > 70){
            // step closer, try floor
            distance -= 0.5;
+           if(distance < 0) distance = 0;
+           var enemy_action = fight_actions.attack;
          }else if(enemy.attitude > 40){
            // keep distance, attack/defense
+             if(enemy_last_damage == 0){
+               var enemy_action = fight_actions.attack;
+             }else{
+               var enemy_action = fight_actions.defend;
+             }
          }else if (enemy.attitude < 30 ){
            // step back, deffense
            distance += 0.5;
+           var enemy_action = fight_actions.defend;           
          }
-         
-         if(distance < 0) distance = 0;
 
-         // PLAYER turn
-         
+
+         // PLANs execution
          if(fight_actions.attack.difficulty * player.experience >= 0.3){
-           var base_damage = player.power;
+           enemy_base_damage = player.power;
            var fight_description = "Player attacks" + enemy.name;
            var player_failed= false;
          }else{
            var fight_description = "Player tries to attack " + enemy.name + " but fails";
-           var base_damage = 0;
+           enemy_base_damage = 0;
            var player_failed = true;
          }
-
-         var enemy_damage = 0;
-         var player_damage = 0;
          
-         // !!!! take into account the item the player might have in the hands...
-         if(distance > 1){
-           if(enemy.attitude > 70){
-             // step closer, try floor
-             var enemy_reaction = fight_actions.attack;
-           }else if(enemy.attitude > 40){
-             // on guard
-             var enemy_reaction = fight_actions.on_guard;           
-           }else if (enemy.attitude < 30 ){
-             // deffense
-             var enemy_reaction = fight_actions.defend;           
+         if(enemy_action == fight_actions.attack){
+           if(enemy_action.difficulty * enemy.experience >= 0.3){
+             player_base_damage = enemy.power;
+           }else{
+             player_base_damage = 0;
            }
-
+         }
+         
+         if(distance >= 1){
+           // no one is hurt, no matter what :-p
            enemy_damage = 0;
-           
+           player_damage = 0;
          }else if (distance >= 0.5){
            //dodge/counter attack
-           if(enemy.attitude > 70){
-             var enemy_reaction = fight_actions.attack;
-             enemy_damage = player.power;
-             player_damage = base_damage;
-           }else if(enemy.attitude > 40){
-             // dodge
-             var enemy_reaction = fight_actions.dodge;
+           if(enemy_action == fight_actions.attack){
+             enemy_damage = enemy_base_damage;
+             player_damage = player_base_damage;
+           }else{
              enemy_damage = 0;
-           }else if (enemy.attitude < 30 ){
-             // dodge
-             var enemy_reaction = fight_actions.dodge;
-             enemy_damage = 0;                                           
+             player_damage = 0;
            }
-           
          }else{
            // block / counter attack
-           if(enemy.attitude > 70){
-             // try floor
-             var enemy_reaction = fight_actions.attack;
-             enemy_damage = base_damage;
-             player_damage = enemy.power;             
-           }else if(enemy.attitude > 40){
-             // block
-             var enemy_reaction = fight_actions.block;
-             enemy_damage = 0.5 * base_damage;                                           
-           }else if (enemy.attitude < 30 ){
-             // block
-             var enemy_reaction = fight_actions.block;
+           if(enemy_action == fight_actions.attack){
+             enemy_damage = enemy_base_damage;
+             player_damage = player_base_damage;
+           }else{
              enemy_damage = 0.5 * base_damage;
+             player_damage = 0;             
            }
          }
 
-         log(fight_description + " (damage " + enemy_damage + "), enemy " + enemy_reaction.english + " (damage: " + player_damage + "). Distance: " + distance);            
+         // !!!! take into account the item the player might have in the hands...
+
+         log(fight_description + " (damage " + enemy_damage + "), enemy " + enemy_action.english + " (damage: " + player_damage + "). Distance: " + distance);            
 
          player.health -= player_damage;
          if (player.health <= 0){
            player.health = 0;
          }
          enemy.health -= enemy_damage;
+         enemy_last_damage = enemy_damage;
          if (enemy.health <= 0){
            enemy.health = 0;
          }
+         
          show_player_status(player);
-         show_enemy_status(enemy);
-
-         // ENEMY "half-turn" (the player decides the answer interactively)
-         if(distance > 1){
-           if(enemy.attitude > 70){
-             var enemy_action = fight_actions.attack;
-           }else if(enemy.attitude > 40){
-             var enemy_action = fight_actions.on_guard;           
-           }else if (enemy.attitude < 30 ){
-             var enemy_action = fight_actions.on_guard;           
-           }
-
-           enemy_damage = 0;
-           
-         }else if (distance >= 0.5){
-           if(enemy.attitude > 70){
-             var enemy_action = fight_actions.attack;
-             enemy_damage = player.power;
-             player_damage = base_damage;
-           }else if(enemy.attitude > 40){
-             if(player_failed){
-               var enemy_action = fight_actions.attack;
-             }else{
-               var enemy_action = fight_actions.on_guard;
-             }
-             enemy_damage = 0;
-           }else if (enemy.attitude < 30 ){
-             var enemy_action = fight_actions.on_guard;
-             enemy_damage = 0;                                           
-           }
-           
-         }else{
-           if(enemy.attitude > 70){
-             var enemy_action = fight_actions.attack;
-             enemy_damage = base_damage;
-             player_damage = enemy.power;             
-           }else if(enemy.attitude > 40){
-             if(player_failed){
-               var enemy_action = fight_actions.attack;
-             }else{
-               var enemy_action = fight_actions.on_guard;
-             }
-             enemy_damage = 0.5 * base_damage;                                           
-           }else if (enemy.attitude < 30 ){
-             // run away
-             var enemy_action = fight_actions.on_guard;
-             enemy_damage = 0.5 * base_damage;
-           }
+         show_npc(enemy);
          
        }
      } // attack()
      
 
-     // player "defends": stays on guard, blocks, dodges or counter-attacks
+     // player intention is to "defend": stays on guard, blocks, dodges or counter-attacks
      function defend(){
         if(player.health > 0){
 
          distance += player_movement();
          if(distance < 0) distance = 0;
          
-         // DISTANCE & ENEMY ACTION
+         // ENEMY PLAN (movement + action)
          // (apparent) HP of each fighter also influence decissions :-p
          // when deffending, the distance should tend to increase, even when the enemy gets closer
          if(enemy.attitude > 70){
@@ -496,22 +444,27 @@ ass", actions:[
            var enemy_action = fight_actions.attack;
          }else if(enemy.attitude > 40){
            // keep distance, attack/defense
-           var enemy_action = fight_actions.attack;           
+             if(enemy_last_damage == 0){
+               var enemy_action = fight_actions.attack;
+             }else{
+               var enemy_action = fight_actions.on_guard;
+             }
          }else if (enemy.attitude < 30 ){
            // step back, deffense
            distance += 0.5;
            var enemy_action = fight_actions.defend;           
          }
 
+         // PLANs execution
          // action success depends upon effectiveness ("experience"), action difficulty
          if(enemy_action.difficulty * enemy.experience >= 0.3){
            if(enemy_action.english == "Attack"){
              // defense depends upon distance, effectiveness, HP
-             if(distance > 1){
+             if(distance >= 1){
                // on guard
                var player_reaction = "on guard";
                var player_damage = 0;               
-             }else if (distance > 0.5){
+             }else if (distance >= 0.5){
                //dodge/counter attack
                var player_reaction = "dodge";               
                var player_damage = 0;                              
@@ -558,7 +511,8 @@ ass", actions:[
        on_guard: {english: "On guard", result: "defend()", difficulty: 0.2},
        dodge: {english: "Dodge", result: "defend()", difficulty: 0.2},
        block: {english: "Block", result: "defend()", difficulty: 0.2},
-       defend: {english: "Defend", result: "defend()", difficulty: 0.2},       
+       // by now, we consider characters always succeed when they try to defend
+       defend: {english: "Defend", result: "defend()", difficulty: 0},       
        attack: {english: "Attack", result: "attack()", difficulty: 0.6},
        fail: {english: "Fail", result: "attack()", difficulty: 0.6},       
        floor: {english: "Floor", result: "floor()", difficulty: 0.8},
@@ -597,7 +551,7 @@ ass", actions:[
      show_npc(joe);
 
      var enemy=joe;
-
+     var enemy_last_damage = 0;
     </script>
 
   </body>
