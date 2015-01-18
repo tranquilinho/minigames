@@ -205,7 +205,7 @@ ass", actions:[
 
        log(current_node.desc);
 
-       show_enemy_status(["Joe", "Pete", "Alex"]);
+       show_enemies_status(["Joe", "Pete", "Alex"]);
        show_player_status();
 
        
@@ -262,7 +262,7 @@ ass", actions:[
      function fight_start(whom){
        document.getElementById("npc_name").innerHTML = whom;
 
-       show_enemy_status(whom);
+       show_enemies_status(whom);
        show_player_status();
        
        document.forms[0].elements[0].value="1 - Escape";
@@ -303,14 +303,14 @@ ass", actions:[
      }
 
      function show_player_status(player){
-       document.getElementById("player_name").innerHTML = player.name + ". " + player.health + " HP. EXP: " + player.experience;
+       document.getElementById("player_name").innerHTML = player.name + ". " + player.health + " HP. EXP: " + player.experience * player.max_experience;
        document.getElementById("player_text").innerHTML = player.looks + "<br>" + player.position;
        if(player.health <= 0){
          log("You died :-(");
        }
      }
 
-     function show_enemy_status(enemies){
+     function show_enemies_status(enemies){
        var npc_text="";
        for (var i=0; i < enemies.length; i++){
          var enemy = current_scene.npcs[enemies[i]];
@@ -322,7 +322,7 @@ ass", actions:[
      }
 
      function show_npc(npc){
-       document.getElementById("npc_name").innerHTML = npc.name + ". " + npc.health + " HP. EXP: " + npc.experience;
+       document.getElementById("npc_name").innerHTML = npc.name + ". " + npc.health + " HP. EXP: " + npc.experience * npc.max_experience;
        document.getElementById("npc_text").innerHTML = npc.looks + "<br>" + npc.position;              
      }
      
@@ -523,8 +523,12 @@ ass", actions:[
      // in meters
      var distance = 1.0;
      
-     // experience is a percentage, indicating how much more the character can improve
-     // by now, we present it as an integer
+     // fighting experience is a percentage, indicating how much more the character can improve
+     // (when someone "knows everything", she can still improve asintotically, so we can simplify
+     //  asuming there's no obvious progress after achieving oneself's 100%)
+     // Then, there's people with a shinier star in fighting, people that can be better than
+     // others, even though all are at X% of experience (hence the max_experience)
+     // With this approach, we can compare 2 characters either by their %experience, or by their absolute value
      // attitude: 0 (run away) .. 50 (neutral) .. 100 (aggresive fury)
      // average rounds should be 3, which influences in enemies power and player defense
      var joe = {
