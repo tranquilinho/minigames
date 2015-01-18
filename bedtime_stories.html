@@ -334,7 +334,9 @@ ass", actions:[
      }
      
      function attack(){
+       // organize interaction in 2 turns: player initiative and enemy initiative
        if(player.health > 0){
+         // MOVING takes more time, hence movement is done only once, in the first turn
          distance += player_movement();
 
          if(enemy.attitude > 70){
@@ -349,12 +351,16 @@ ass", actions:[
          
          if(distance < 0) distance = 0;
 
+         // PLAYER turn
+         
          if(fight_actions.attack.difficulty * player.experience >= 0.3){
            var base_damage = player.power;
-           var fight_description = "Player attacks" + enemy.name;           
+           var fight_description = "Player attacks" + enemy.name;
+           var player_failed= false;
          }else{
            var fight_description = "Player tries to attack " + enemy.name + " but fails";
            var base_damage = 0;
+           var player_failed = true;
          }
 
          var enemy_damage = 0;
@@ -384,7 +390,7 @@ ass", actions:[
            }else if(enemy.attitude > 40){
              // dodge
              var enemy_reaction = fight_actions.dodge;
-             enemy_damage = 0;                                           
+             enemy_damage = 0;
            }else if (enemy.attitude < 30 ){
              // dodge
              var enemy_reaction = fight_actions.dodge;
@@ -420,7 +426,55 @@ ass", actions:[
            enemy.health = 0;
          }
          show_player_status(player);
-         show_enemy_status(enemy);         
+         show_enemy_status(enemy);
+
+         // ENEMY "half-turn" (the player decides the answer interactively)
+         if(distance > 1){
+           if(enemy.attitude > 70){
+             var enemy_action = fight_actions.attack;
+           }else if(enemy.attitude > 40){
+             var enemy_action = fight_actions.on_guard;           
+           }else if (enemy.attitude < 30 ){
+             var enemy_action = fight_actions.on_guard;           
+           }
+
+           enemy_damage = 0;
+           
+         }else if (distance >= 0.5){
+           if(enemy.attitude > 70){
+             var enemy_action = fight_actions.attack;
+             enemy_damage = player.power;
+             player_damage = base_damage;
+           }else if(enemy.attitude > 40){
+             if(player_failed){
+               var enemy_action = fight_actions.attack;
+             }else{
+               var enemy_action = fight_actions.on_guard;
+             }
+             enemy_damage = 0;
+           }else if (enemy.attitude < 30 ){
+             var enemy_action = fight_actions.on_guard;
+             enemy_damage = 0;                                           
+           }
+           
+         }else{
+           if(enemy.attitude > 70){
+             var enemy_action = fight_actions.attack;
+             enemy_damage = base_damage;
+             player_damage = enemy.power;             
+           }else if(enemy.attitude > 40){
+             if(player_failed){
+               var enemy_action = fight_actions.attack;
+             }else{
+               var enemy_action = fight_actions.on_guard;
+             }
+             enemy_damage = 0.5 * base_damage;                                           
+           }else if (enemy.attitude < 30 ){
+             // run away
+             var enemy_action = fight_actions.on_guard;
+             enemy_damage = 0.5 * base_damage;
+           }
+         
        }
      } // attack()
      
@@ -543,7 +597,7 @@ ass", actions:[
      show_npc(joe);
 
      var enemy=joe;
-     
+
     </script>
 
   </body>
