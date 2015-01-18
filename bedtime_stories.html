@@ -153,38 +153,18 @@ ass", actions:[
 
 
      function assign_actions(actions){
-       if(actions[0] == undefined){
-         document.forms[0].elements[0].value=" ";
-         document.forms[0].elements[0].onclick=null;
-       }else{
-         document.forms[0].elements[0].value="1 - " + actions[0].english;
-         document.forms[0].elements[0].setAttribute("onclick",actions[0].result);
+       var button_index=0;
+       for(var action_key in actions){
+         var action = actions[action_key];
+         if(action == undefined){
+           document.forms[0].elements[button_index].value=" ";
+           document.forms[0].elements[button_index].onclick=null;
+         }else{
+           document.forms[0].elements[button_index].value = button_index + " - " + action.english;
+           document.forms[0].elements[button_index].setAttribute("onclick", action.result);
+         }
+         button_index ++;
        }
-
-       if(actions[1] == undefined){
-         document.forms[0].elements[1].value=" ";
-         document.forms[0].elements[1].onclick=null;
-       }else{    
-         document.forms[0].elements[1].value="2 - " + actions[1].english;
-         document.forms[0].elements[1].setAttribute("onclick",actions[1].result);
-       }
-     
-       if(actions[2] == undefined){
-         document.forms[0].elements[2].value=" ";
-         document.forms[0].elements[2].onclick=null;
-       }else{
-         document.forms[0].elements[2].value="3 - " + actions[2].english;
-         document.forms[0].elements[2].setAttribute("onclick",actions[2].result);
-       }
-
-       if(actions[3] == undefined){
-         document.forms[0].elements[3].value=" ";
-         document.forms[0].elements[3].onclick=null;
-       }else{
-         document.forms[0].elements[3].value="4 - " + actions[3].english;
-         document.forms[0].elements[3].setAttribute("onclick",actions[3].result);
-       }
-       
      }
 
 
@@ -356,22 +336,56 @@ ass", actions:[
        }
      }
 
+     // player "defends": stays on guard, blocks, dodges or counter-attacks
+     function defend(){
+        if(player.health > 0){
 
-     function defend(from){
-       if(player.health > 0){
-         var from_attacks = current_scene.npcs[from].attacks; 
-         var random_index=Math.floor(Math.random() * from_attacks.length);
-         var from_attack = current_scene.npcs[from].attacks[random_index];
-         var from_hit_points = from_attack.hit_points / 2;
-         log(from + " " + from_attack.description + " but (luckily) you were on guard");
-         if(player.health >= from_hit_points){
-           player.health -= from_hit_points;
-           show_player_status();
-         }else{
-           show_player_status();
-           var my_text = "Your defense wasn't enough - you died... ";
-           document.getElementById("player_text").innerHTML = my_text;
-         }                                                            }
+         // DISTANCE & ENEMY ACTION
+         // (apparent) HP of each fighter also influence decissions :-p
+         // when deffending, the distance should tend to increase, even when the enemy gets closer
+         if(enemy.attitude > 70){
+           // step closer, try floor
+           distance -= 0.5;
+           if(distance < 0) distance = 0;
+           var enemy_action = fight_actions.attack;
+         }else if(enemy.attitude > 40){
+           // keep distance, attack/defense
+           var enemy_action = fight_actions.attack;           
+         }else if (enemy.attitude < 30 ){
+           // step back, deffense
+           distance += 0.5;
+           var enemy_action = fight_actions.defend;           
+         }
+
+         // action success depends upon effectiveness ("experience"), action difficulty
+         if(enemy_action.difficulty * enemy.experience >= 0.3){
+           if(enemy_action.english == "Attack"){
+             // defense depends upon distance, effectiveness, HP
+             if(distance > 1){
+               // on guard
+               var player_reaction = "on guard";
+               var player_damage = 0;               
+             }else if (distance > 0.5){
+               //dodge/counter attack
+               var player_reaction = "dodge";               
+               var player_damage = 0;                              
+             }else{
+               // block / counter attack
+               var player_reaction = "block";                              
+               var player_damage = 0.5 * enemy.power;                              
+             }
+           }else if (enemy_action.english == "Floor"){
+
+           }
+
+           player.health -= player_damage;
+           if (player.health < 0) player.health = 0;
+         } // successful action
+         
+         log(enemy.name + " " + enemy_action.english + " , player " + player_reaction + ", damage: " + player_damage + ". Distance: " + distance); 
+
+         show_player_status(player);
+       } //player.health
      }
 
      function fightTest(){
@@ -391,19 +405,40 @@ ass", actions:[
      var current_dialog=-1;
      var current_line=0;
 
-     var fight_actions = [
-       {english: "Defend", result: "talk(['Joe','Pete','Alex'])"},
-       {english: "Attack", result: "fight_tree.F001.player_health=player.health; fight(fight_tree.F001)"},
-       {english: "Floor", result: ""}
-     ];
+     var fight_actions = {
+       defend: {english: "Defend", result: "defend()", difficulty: 0.2},
+       attack: {english: "Attack", result: "attack()", difficulty: 0.6},
+       floor: {english: "Floor", result: "floor()", difficulty: 0.8},
+       // pretend you are collapsing, or show a fake attitude
+       fake: {english: "Fake", result: "fake()"}
+     };
 
-     var joe={name: "Joe", looks: "Serial Killer 80%", health: 10, experience: 10, position: "middle"};
-     var player={name: "Me", looks: "Inoffensive 100%", health: 8, experience: 6, position: "middle"};
+     // in meters
+     var distance = 1.0;
+     
+     // experience is a percentage, indicating how much more the character can improve
+     // by now, we present it as an integer
+     // attitude: 0 (run away) .. 50 (neutral) .. 100 (aggresive fury)
+     // average rounds should be 3, which influences in enemies power and player defense
+     var joe = {
+       name: "Joe", looks: "Serial Killer 80%",
+       health: 12, power: 6,
+       experience: 0.5, max_experience: 100,
+       position: "middle", attitude: 50};
+     
+     var player = {
+       name: "Me", looks: "Inoffensive 100%",
+       health: 9, power: 3,
+       experience: 0.1, max_experience: 150,
+       position: "middle", attitude: 50};
      
      // document.getElementById("scene_text").innerHTML = current_scene.english;     
      assign_actions(fight_actions);
      show_player_status(player);
      show_npc(joe);
+
+     var enemy=joe;
+     
     </script>
 
   </body>
