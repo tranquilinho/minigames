@@ -267,6 +267,24 @@ ass", actions:[
        document.forms[0].elements[3].setAttribute("onclick","attack('" + whom + "','Feet')");
      }
 
+     function player_movement(){
+       var distance_delta = 0;
+       if(document.forms[0].elements[4].checked){
+         distance_delta = -0.5;
+       }
+
+       if(document.forms[0].elements[5].checked){
+         distance_delta = 0;
+       }
+
+       if(document.forms[0].elements[6].checked){
+         distance_delta = 0.5;
+       }
+       
+       return distance_delta;
+     }
+
+     
      // !!!! We don't want to have to scroll, so the text should summarize or disappear before
      // growing bigger than the scene text panel...
      function log(text){
@@ -275,7 +293,10 @@ ass", actions:[
 
      function show_player_status(player){
        document.getElementById("player_name").innerHTML = player.name + ". " + player.health + " HP. EXP: " + player.experience;
-       document.getElementById("player_text").innerHTML = player.looks + "<br>" + player.position;              
+       document.getElementById("player_text").innerHTML = player.looks + "<br>" + player.position;
+       if(player.health <= 0){
+         log("You died :-(");
+       }
      }
 
      function show_enemy_status(enemies){
@@ -340,6 +361,9 @@ ass", actions:[
      function defend(){
         if(player.health > 0){
 
+         distance += player_movement();
+         if(distance < 0) distance = 0;
+         
          // DISTANCE & ENEMY ACTION
          // (apparent) HP of each fighter also influence decissions :-p
          // when deffending, the distance should tend to increase, even when the enemy gets closer
@@ -378,12 +402,15 @@ ass", actions:[
 
            }
 
+           log(enemy.name + " " + enemy_action.english + " , player " + player_reaction + ", damage: " + player_damage + ". Distance: " + distance);            
+
            player.health -= player_damage;
-           if (player.health < 0) player.health = 0;
+           if (player.health <= 0){
+             player.health = 0;
+           }
+           
          } // successful action
          
-         log(enemy.name + " " + enemy_action.english + " , player " + player_reaction + ", damage: " + player_damage + ". Distance: " + distance); 
-
          show_player_status(player);
        } //player.health
      }
@@ -432,7 +459,8 @@ ass", actions:[
        experience: 0.1, max_experience: 150,
        position: "middle", attitude: 50};
      
-     // document.getElementById("scene_text").innerHTML = current_scene.english;     
+     // document.getElementById("scene_text").innerHTML = current_scene.english;
+     log("Distance: " + distance);
      assign_actions(fight_actions);
      show_player_status(player);
      show_npc(joe);
